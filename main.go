@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -14,25 +15,30 @@ import (
 )
 
 type Param struct {
-	Package    string
-	DetailName string
-	TypeDef    string
+	Package         string
+	DetailName      string
+	EnumConstructor string
 }
 
 var (
-	defaultDestName = "___empty___"
-	detailName      = flag.String("detail_name", "", ``)
-	packageName     = flag.String("package_name", "", ``)
-	typeDefName     = flag.String("type_def_name", "", ``)
-	destName        = flag.String("dest_name", defaultDestName, ``)
+	emptyString         = "___empty___"
+	detailName          = flag.String("detail_name", "", ``)
+	packageName         = flag.String("package_name", "", ``)
+	typeConstructorName = flag.String("type_constructor_name", emptyString, ``)
+	destName            = flag.String("dest_name", emptyString, ``)
 )
 
 func main() {
 	flag.Parse()
+
+	enumConstructor := *typeConstructorName
+	if *typeConstructorName == emptyString {
+		enumConstructor = fmt.Sprintf("%sTypeConstructor", *detailName)
+	}
 	param := Param{
-		DetailName: *detailName,
-		Package:    *packageName,
-		TypeDef:    *typeDefName,
+		DetailName:      *detailName,
+		Package:         *packageName,
+		EnumConstructor: enumConstructor,
 	}
 	statikFS, err := fs.New()
 	if err != nil {
@@ -57,7 +63,7 @@ func main() {
 	}
 
 	var dest io.Writer
-	if *destName == defaultDestName {
+	if *destName == emptyString {
 		dest = os.Stdout
 	} else {
 		writeFile, err := os.OpenFile(*destName, os.O_WRONLY|os.O_CREATE, os.ModePerm)

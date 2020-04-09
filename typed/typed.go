@@ -6,29 +6,29 @@ import (
 )
 
 type (
-	TypeLabel interface {
+	TypeEnum interface {
 		EmptyDetail() (interface{}, error)
-		Def() TypeLabelDef
+		Constructor() TypeEnumConstructor
 		fmt.Stringer
 	}
 
-	TypeLabelDef interface {
-		TypeFromString(string) (TypeLabel, error)
+	TypeEnumConstructor interface {
+		FromString(string) (TypeEnum, error)
 	}
 
 	AnyDetail interface {
-		Type() TypeLabel
+		Type() TypeEnum
 	}
 
 	TypedJSON struct {
-		Type string          `json:"type"`
-		Body json.RawMessage `json:"body"`
-		Def  TypeLabelDef
+		Type            string              `json:"type"`
+		Body            json.RawMessage     `json:"body"`
+		EnumConstructor TypeEnumConstructor `json:"-"`
 	}
 )
 
 func (j *TypedJSON) ToDetail() (interface{}, error) {
-	typ, err := j.Def.TypeFromString(j.Type)
+	typ, err := j.EnumConstructor.FromString(j.Type)
 	if err != nil {
 		return nil, err
 	}
@@ -49,8 +49,8 @@ func JSONFromDetail(detail AnyDetail) (*TypedJSON, error) {
 		return nil, err
 	}
 	return &TypedJSON{
-		Type: detail.Type().String(),
-		Body: detailJSON,
-		Def:  detail.Type().Def(),
+		Type:            detail.Type().String(),
+		Body:            detailJSON,
+		EnumConstructor: detail.Type().Constructor(),
 	}, nil
 }

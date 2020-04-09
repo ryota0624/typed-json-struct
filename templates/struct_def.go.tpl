@@ -29,6 +29,22 @@ func (c *{{.DetailName}}JSON) UnmarshalJSON(b []byte) error {
 
 	c.Type = typedJSON.Type
 	c.Body = typedJSON.Body
-	c.Def = &{{.TypeDef}}{}
+	c.EnumConstructor = {{.EnumConstructor}}{}
 	return nil
+}
+
+
+func (c *{{.DetailName}}JSON) ToDetail() ({{.DetailName}}, error) {
+	j := &typed.TypedJSON{
+		Type: c.Type,
+		Body: c.Body,
+		EnumConstructor:  c.EnumConstructor,
+	}
+
+	detail, err := j.ToDetail()
+	if err != nil {
+		return nil, err
+	}
+
+	return detail.({{.DetailName}}), nil
 }

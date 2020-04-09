@@ -7,12 +7,17 @@ import (
 )
 
 type (
+	DataJSON struct {
+		Type   DataType       `json:"type"`
+		Detail DataDetailJSON `json:"detail"`
+	}
+
 	DataDetail interface {
 		typed.AnyDetail
 	}
 
-	DataType string
-	DataDetailTypeDef struct {}
+	DataType                  string
+	DataDetailTypeConstructor struct{}
 
 	DataDetail1 struct {
 		StringField string
@@ -23,17 +28,25 @@ type (
 	}
 )
 
+func (d DataDetail2) Type() typed.TypeEnum {
+	return DataType2
+}
+
+func (d DataDetail1) Type() typed.TypeEnum {
+	return DataType1
+}
+
 const (
 	DataType1 DataType = "1"
 	DataType2 DataType = "2"
 )
 
-func (d DataDetailTypeDef) TypeFromString(str string) (typed.TypeLabel, error) {
+func (d DataDetailTypeConstructor) FromString(str string) (typed.TypeEnum, error) {
 	switch str {
 	case DataType1.String():
-		return DataType1,nil
+		return DataType1, nil
 	case DataType2.String():
-		return DataType2,nil
+		return DataType2, nil
 	default:
 		return nil, errors.New("not defined type received")
 	}
@@ -50,8 +63,8 @@ func (d DataType) EmptyDetail() (interface{}, error) {
 	}
 }
 
-func (d DataType) Def() typed.TypeLabelDef {
-	return DataDetailTypeDef{}
+func (d DataType) Constructor() typed.TypeEnumConstructor {
+	return DataDetailTypeConstructor{}
 }
 
 func (d DataType) String() string {
@@ -59,7 +72,8 @@ func (d DataType) String() string {
 }
 
 var (
-	_ typed.TypeLabel = DataType(0)
-	_ typed.TypeLabelDef = DataDetailTypeDef{}
-
+	_ typed.TypeEnum            = DataType(0)
+	_ typed.TypeEnumConstructor = DataDetailTypeConstructor{}
+	_ DataDetail                = (*DataDetail1)(nil)
+	_ DataDetail                = (*DataDetail2)(nil)
 )
