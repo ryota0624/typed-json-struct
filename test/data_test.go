@@ -19,7 +19,7 @@ func TestDataDetailJSONConvert(t *testing.T) {
 		Detail: *detailJSON,
 	}
 
-	detail2, err := data.Detail.ToDetail()
+	detail2, err := data.Detail.DataDetail()
 	if err != nil {
 		panic(err)
 	}

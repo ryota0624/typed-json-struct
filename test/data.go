@@ -1,6 +1,6 @@
 package test
 
-//go:generate go run github.com/ryota0624/typed-json-struct -package_name=$GOPACKAGE -detail_name=DataDetail -dest_name json_$GOFILE
+//go:generate go run github.com/ryota0624/typed-json-struct -package_name=$GOPACKAGE -interface_name=DataDetail -dest_name json_$GOFILE
 
 import (
 	"errors"

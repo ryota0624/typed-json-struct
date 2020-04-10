@@ -16,13 +16,13 @@ import (
 
 type Param struct {
 	Package         string
-	DetailName      string
+	Interface       string
 	EnumConstructor string
 }
 
 var (
 	emptyString         = "___empty___"
-	detailName          = flag.String("detail_name", "", ``)
+	interfaceName       = flag.String("interface_name", "", ``)
 	packageName         = flag.String("package_name", "", ``)
 	typeConstructorName = flag.String("type_constructor_name", emptyString, ``)
 	destName            = flag.String("dest_name", emptyString, ``)
@@ -33,10 +33,10 @@ func main() {
 
 	enumConstructor := *typeConstructorName
 	if *typeConstructorName == emptyString {
-		enumConstructor = fmt.Sprintf("%sTypeConstructor", *detailName)
+		enumConstructor = fmt.Sprintf("%sTypeConstructor", *interfaceName)
 	}
 	param := Param{
-		DetailName:      *detailName,
+		Interface:       *interfaceName,
 		Package:         *packageName,
 		EnumConstructor: enumConstructor,
 	}
